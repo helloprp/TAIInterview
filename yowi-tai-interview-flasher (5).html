@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOWI/TAI Interview Flasher — All Roles</title>
+<style>
+  :root{
+    --navy-950:#0f1b2d; --navy-900:#152540; --navy-800:#1d3157; --navy-700:#28406f;
+    --paper:#f6f4ee; --paper-dim:#eae6da; --ink:#1b2333; --ink-soft:#5b6577;
+    --gold:#c99a3d; --gold-soft:#e7cd8f; --green:#3f7a5c; --line:#d8d2c1;
+    --shadow: 0 20px 50px -20px rgba(15,27,45,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{ margin:0; font-family:"Source Sans Pro","Segoe UI",Helvetica,Arial,sans-serif; background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(28,64,111,0.10), transparent 60%), var(--paper);
+    color:var(--ink); min-height:100vh; }
+  .display{ font-family:"Georgia",serif; }
+
+  .topbar{ position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px; background:var(--navy-950); color:var(--paper); border-bottom:3px solid var(--gold); }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{ width:38px;height:38px;border-radius:50%; background:#fff; display:flex;align-items:center;justify-content:center; overflow:hidden; padding:2px; }
+  .brand-mark img{ width:100%; height:100%; object-fit:contain; }
+  .brand-text{ line-height:1.15; }
+  .brand-text .role{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-soft); }
+  .brand-text .title{ font-size:15px; font-weight:600; }
+  .top-meta{ display:flex; align-items:center; gap:22px; font-size:13px; color:var(--paper-dim); }
+  .top-meta b{ color:#fff; font-weight:600; }
+  .timer{ font-variant-numeric: tabular-nums; background:var(--navy-800); padding:6px 12px;border-radius:8px;
+    border:1px solid var(--navy-700); letter-spacing:.03em; }
+
+  .shell{ display:flex; min-height:calc(100vh - 62px); }
+
+  .sidebar{ width:300px; flex-shrink:0; background:var(--navy-900); color:var(--paper-dim); padding:20px 0 30px;
+    overflow-y:auto; max-height:calc(100vh - 62px); border-right:1px solid var(--navy-800); }
+  .sidebar.hidden{ display:none; }
+  .sidebar h4{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--gold-soft); margin:18px 22px 8px; font-weight:700; }
+  .qnav-item{ display:flex; gap:10px; align-items:flex-start; padding:8px 22px; cursor:pointer; font-size:13px; line-height:1.35; border-left:3px solid transparent; }
+  .qnav-item:hover{ background:rgba(255,255,255,0.04); }
+  .qnav-item.active{ background:rgba(201,154,61,0.14); border-left:3px solid var(--gold); color:#fff; }
+  .qnav-item.done .qnum{ background:var(--green); border-color:var(--green); color:#fff; }
+  .qnav-item.done .qtext{ color:#a9c6b6; text-decoration:line-through; text-decoration-color:rgba(169,198,182,0.5); }
+  .qnum{ flex-shrink:0; width:20px; height:20px; border-radius:50%; border:1px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center; font-size:10px; margin-top:1px; }
+
+  .main{ flex:1; display:flex; flex-direction:column; align-items:center; padding:36px 24px 50px; }
+
+  /* Role picker */
+  .role-wrap{ max-width:800px; width:100%; margin-top:2vh; text-align:center; }
+  .role-wrap h1{ font-family:"Georgia",serif; font-size:28px; margin:0 0 8px; color:var(--navy-950); }
+  .role-logo{ width:210px; height:auto; object-fit:contain; margin:0 auto 14px; display:block; opacity:0.45; }
+  .role-wrap p.lede{ color:var(--ink-soft); margin:0 0 32px; font-size:15px; }
+  .role-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .role-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:26px 24px; text-align:left;
+    cursor:pointer; box-shadow:var(--shadow); transition:transform .12s ease, border-color .12s ease; }
+  .role-card:hover{ transform:translateY(-2px); border-color:var(--gold); }
+  .role-card .rletter{ width:40px;height:40px;border-radius:10px; background:var(--navy-950); color:var(--gold-soft);
+    display:flex;align-items:center;justify-content:center; font-family:"Georgia",serif; font-weight:700; font-size:17px; margin-bottom:14px; }
+  .role-card h3{ margin:0 0 6px; font-size:17px; color:var(--navy-950); }
+  .role-card p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.5; }
+  .role-card .qcount{ margin-top:12px; font-size:11.5px; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+
+  /* Setup screen */
+  .setup-wrap{ max-width:640px; width:100%; margin-top:2vh; }
+  .setup-card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:38px 40px; box-shadow:var(--shadow); }
+  .setup-card h1{ font-family:"Georgia",serif; font-size:26px; margin:0 0 4px; color:var(--navy-950); }
+  .setup-card .pos-tag{ font-size:12.5px; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:16px; }
+  .setup-card p.lede{ color:var(--ink-soft); margin:0 0 24px; font-size:14.5px; }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; }
+  .field input, .field select{ width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:8px; font-size:15px; font-family:inherit; background:var(--paper); }
+  .field input:focus{ outline:2px solid var(--gold); outline-offset:1px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .modeblock{ border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:20px; background:var(--paper); }
+  .modeblock label.check{ display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--ink); cursor:pointer; text-transform:none; font-weight:400; margin:0 0 8px; }
+  .modeblock label.check:last-child{ margin-bottom:0; }
+  .modeblock input[type=checkbox]{ margin-top:3px; }
+  .btn{ appearance:none; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:600; border-radius:9px; padding:13px 22px; transition:transform .12s ease, box-shadow .12s ease; }
+  .btn:active{ transform:translateY(1px); }
+  .btn-primary{ background:var(--navy-950); color:#fff; }
+  .btn-primary:hover{ box-shadow:0 8px 20px -8px rgba(15,27,45,0.5); }
+  .btn-ghost{ background:transparent; color:var(--navy-900); border:1px solid var(--line); }
+  .btn-gold{ background:var(--gold); color:var(--navy-950); }
+  .setup-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+  .back-link{ font-size:13px; color:var(--ink-soft); cursor:pointer; text-decoration:underline; background:none; border:none; padding:0; }
+
+  .consent-box{ background:#fbf6ea; border:1px solid var(--gold-soft); border-radius:10px; padding:18px 20px; margin-bottom:20px; }
+  .consent-box h3{ margin:0 0 8px; font-size:14.5px; color:var(--navy-950); }
+  .consent-box p{ margin:0 0 10px; font-size:13px; color:var(--ink-soft); line-height:1.55; }
+  .disclaimer-quote{ font-family:"Georgia",serif; font-style:italic; font-size:13.5px; color:var(--navy-900); background:#fff;
+    border-left:3px solid var(--gold); padding:12px 14px; margin:0 0 14px; line-height:1.5; }
+  .consent-box label.check{ display:flex; gap:9px; align-items:flex-start; font-size:13px; cursor:pointer; text-transform:none; font-weight:400; margin:0; }
+  .consent-box input[type=checkbox]{ margin-top:3px; }
+  .status-line{ font-size:13px; color:var(--ink-soft); margin-top:12px; }
+  .status-line.err{ color:#b64a3c; }
+
+  /* Flasher */
+  .flasher{ display:none; width:100%; max-width:920px; flex-direction:column; align-items:center; }
+  .flasher.active{ display:flex; }
+  .progress-track{ width:100%; height:6px; background:var(--paper-dim); border-radius:4px; overflow:hidden; margin-bottom:26px; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg,var(--gold),var(--navy-800)); width:0%; transition:width .3s ease; }
+  .stagehead{ display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+  .stagehead .candtag{ font-size:14px; color:var(--ink-soft); }
+  .stagehead .candtag b{ color:var(--ink); }
+  .counter{ font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .card{ width:100%; background:#fff; border-radius:20px; border:1px solid var(--line); box-shadow:var(--shadow);
+    padding:56px 56px 48px; text-align:center; min-height:280px; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; }
+  .part-badge{ position:absolute; top:22px; left:28px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#fff;
+    background:var(--navy-900); padding:5px 12px; border-radius:999px; font-weight:700; }
+  .cat-badge{ font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:18px; }
+  .qtext{ font-family:"Georgia",serif; font-size:clamp(20px, 2.6vw, 29px); line-height:1.5; color:var(--navy-950); max-width:760px; white-space:pre-line; }
+  .qhint{ margin-top:18px; font-size:13px; color:var(--ink-soft); font-style:italic; max-width:640px; }
+  .controls{ display:flex; align-items:center; gap:14px; margin-top:30px; }
+  .controls .btn{ min-width:120px; }
+  .kbd-hint{ font-size:12px; color:var(--ink-soft); margin-top:14px; }
+  .kbd{ border:1px solid var(--line); border-radius:5px; padding:1px 6px; background:#fff; font-family:monospace; }
+  .toggle-sidebar-btn{ position:fixed; left:0; top:80px; z-index:15; background:var(--navy-900); color:#fff; border:none;
+    border-radius:0 8px 8px 0; padding:10px 6px; cursor:pointer; font-size:12px; }
+
+  .end-wrap{ display:none; max-width:680px; width:100%; text-align:center; margin-top:6vh; }
+  .end-wrap.active{ display:block; }
+  .end-wrap .stamp{ width:64px;height:64px;border-radius:50%; margin:0 auto 20px; background:var(--green); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:28px; }
+  .end-wrap h2{ font-family:"Georgia",serif; font-size:26px; color:var(--navy-950); margin:0 0 10px; }
+  .end-wrap p{ color:var(--ink-soft); margin:0 0 26px; }
+  .end-actions{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+  /* Camera & voice setup */
+  .cam-block{ border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-bottom:20px; background:var(--paper); }
+  .cam-block h3{ margin:0 0 4px; font-size:14.5px; color:var(--navy-950); }
+  .cam-block p.sub{ margin:0 0 12px; font-size:12.5px; color:var(--ink-soft); }
+  .cam-preview-wrap{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .cam-preview{ width:180px; height:135px; background:#0f1b2d; border-radius:10px; overflow:hidden; flex-shrink:0; position:relative; }
+  .cam-preview video{ width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+  .cam-preview .cam-placeholder{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--paper-dim); font-size:12px; text-align:center; padding:10px; }
+  .cam-status{ font-size:13px; color:var(--ink-soft); }
+  .cam-status.ok{ color:var(--green); font-weight:600; }
+  .cam-status.err{ color:#b64a3c; font-weight:600; }
+
+  .lock-notice{ background:#fbf6ea; border:1px solid var(--gold-soft); border-radius:10px; padding:14px 16px; margin-bottom:20px; font-size:13px; color:var(--ink-soft); line-height:1.5; }
+  .lock-notice b{ color:var(--navy-950); }
+  .lock-notice label.check{ display:flex; gap:9px; align-items:flex-start; font-size:13px; cursor:pointer; margin-top:10px; font-weight:400; }
+  .lock-notice input[type=checkbox]{ margin-top:3px; }
+
+  .rec-badge{ display:none; align-items:center; gap:6px; background:#7a2e22; color:#fff; padding:5px 12px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.04em; }
+  .rec-badge.active{ display:flex; }
+  .rec-dot{ width:8px; height:8px; border-radius:50%; background:#ff6a52; animation:recpulse 1.2s infinite; }
+  @keyframes recpulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  .cam-corner{ position:fixed; bottom:18px; right:18px; width:150px; height:112px; border-radius:10px; overflow:hidden;
+    box-shadow:var(--shadow); border:2px solid var(--gold); z-index:25; display:none; background:#0f1b2d; }
+  .cam-corner.active{ display:block; }
+  .cam-corner video{ width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+
+  .replay-voice-btn{ margin-top:16px; background:transparent; border:1px solid var(--line); border-radius:999px; padding:8px 16px;
+    font-size:12.5px; color:var(--navy-900); cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+  .replay-voice-btn:hover{ border-color:var(--gold); }
+  .speaking-indicator{ font-size:11.5px; color:var(--gold); margin-top:6px; letter-spacing:.05em; text-transform:uppercase; font-weight:700; min-height:14px; }
+
+  .exit-overlay{ display:none; position:fixed; inset:0; background:rgba(15,27,45,0.94); z-index:50; align-items:center; justify-content:center; text-align:center; color:#fff; padding:24px; }
+  .exit-overlay.active{ display:flex; }
+  .exit-overlay .box{ max-width:440px; }
+  .exit-overlay h2{ font-family:"Georgia",serif; font-size:24px; margin:0 0 12px; color:#fff; }
+  .exit-overlay p{ color:var(--paper-dim); margin:0 0 22px; font-size:14.5px; line-height:1.5; }
+
+  .flag-line{ font-size:13px; color:#b64a3c; margin-top:8px; }
+
+  @media (max-width:760px){
+    .sidebar{ display:none !important; } .toggle-sidebar-btn{ display:none; } .card{ padding:36px 22px; }
+    .row2{ grid-template-columns:1fr; } .topbar{ padding:12px 16px; } .top-meta{ gap:12px; font-size:11.5px; }
+    .role-grid{ grid-template-columns:1fr; }
+  }
+  @media print{ .topbar, .sidebar, .toggle-sidebar-btn, .controls, .kbd-hint, .progress-track{ display:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><img id="topLogoImg" src="data:image/jpeg;base64,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aY5TJdeT2oWZomZQLwXWCAyCEjeg1HHFjU2idbg8CqJapGwyZglAbC4W9LMObhA2a30qvWMqPBMRsbWquLW0aRYVGnPHEQIiyq6Lb7QBVLikUfUol0pRwKNLoDyQCGksj6IBB4mzSckwtNREBnLYzLJ5hajYrldyxMfN8ZPIMC8S0EdUFHmS2fSBoeoYpZsqh6SnAJbcLdO2iJjdMKbjA3WeZanxSQU1PKH9gbkeloR5MZKQoxLHuSZMz+c8MitACN9r/YdPbyHMxcQohwuQy3qc7wFTihuXUBDnYIbPPdYbALloabwvlmMp7eLYeK0PPMrWcPQo6tSnVonphKBeoxqLKxm1FSuOiHTs7lCK2zmYRRbp3zGgWesUhllxg905YU5tb9R0XfTxX//aAAwDAQACAAMAAAAQ8y888538884288u238GC187Of888+4eKwT7V88888887SOfn88888888dDV1988888888sUAl8888888888+j+88888888889y888888888888288888886Vnw2QPPZ08888FKiUwcFkW88EMlx/N0tzJlCA8888888888888//EACYRAQABAwMBCQEAAAAAAAAAAAERACExQVFhcRAgMIGRocHR4bH/2gAIAQMBAT8QpQCncVglqeUO61DDz2rZk2aJCvqPxSsEPYybJpaAWIlbss05Vj9p7CZefJp1zzSJSV7gJ4SosbM/laWvf9ptASkU9p087UQgPS/zTHBvoedD4LfDy+/SnUsD3/NjvnMpQ/G0ZJh3M0x0gx60QHAbUjKdXx9+ng3D+B07ChFSJysdfylUrnwpxws9T7pQikYbB8+HJvA9z8mo2z/dKz4fAKP3UEGr/A+/FYacnWCfAADjUmlA7+DdiPmnsyLcmFj0o5xmNt5asyDOZ0ilppIQQvJSRmszHE0SpKHoxU/JiPrn0oAmBI92RBcF7Xt7VLd5JYLOl/qpF0msc3kuU3uySLJs4/lXEzGgnK0wdvbWOk5qTHaGFkWaiK8QXF3Zi1TZrYlZHN43327Xout2eEYjKcz6IQQsyZdmeMgY18wC4RN8zpYL2zLLw4kAaCYXc+OHikzIHhUyb+c560QSWTeXeduP7sdhS6SsMb8M+2k1EAyyvMeWIt1zYOJ6TZb4t1VfIowAtrLs3OrGbQ6VfIyi+xbVdvqhqY9VCJdT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" alt="YOWI logo"></div>
+    <div class="brand-text">
+      <div class="role">YOWI / TAI · Human Resources</div>
+      <div class="title">Interview Flasher</div>
+    </div>
+  </div>
+  <div class="top-meta" id="topMeta" style="display:none;">
+    <span>Candidate: <b id="topCandidate">—</b></span>
+    <span>Position: <b id="topPosition">—</b></span>
+    <span class="timer" id="timerDisplay">00:00</span>
+    <span class="rec-badge" id="recBadge"><span class="rec-dot"></span> REC</span>
+  </div>
+</div>
+<div class="cam-corner" id="camCorner"><video id="camCornerVideo" autoplay muted playsinline></video></div>
+<canvas id="recordCanvas" width="1280" height="720" style="display:none;"></canvas>
+<video id="camSourceVideo" autoplay muted playsinline style="position:fixed; top:0; left:0; width:1px; height:1px; opacity:0; pointer-events:none;"></video>
+<div class="exit-overlay" id="exitOverlay">
+  <div class="box">
+    <h2>Interview restarted</h2>
+    <p id="exitReasonText">You left the interview window. To keep this a fair, unassisted session, the interview has been restarted from Question 1 and re-entering fullscreen will begin recording again.</p>
+    <button class="btn btn-gold" id="exitAckBtn">Continue in fullscreen →</button>
+  </div>
+</div>
+
+<div class="shell">
+  <button class="toggle-sidebar-btn" id="toggleSidebarBtn" style="display:none;">☰ Questions</button>
+  <div class="sidebar hidden" id="sidebar"></div>
+
+  <div class="main">
+
+    <!-- SCREEN -3: WELCOME -->
+    <div class="role-wrap" id="welcomeScreen">
+      <img class="role-logo" id="welcomeLogoImg" alt="YOWI logo">
+      <h1>Welcome to YAHSHUA Outsourcing Inc.</h1>
+      <p class="lede">Initial Screening Interview</p>
+      <p class="lede" style="margin-top:-14px;">Thank you for your interest in joining our team. This short, guided interview will ask you a series of questions about your background and the role you're applying for. Please find a quiet space with a stable internet connection before you begin.</p>
+      <div class="setup-actions" style="justify-content:center;">
+        <button class="btn btn-primary" id="welcomeNextBtn">Next →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN -2: REMINDERS -->
+    <div class="role-wrap" id="remindersScreen" style="display:none;">
+      <img class="role-logo" id="remindersLogoImg" alt="YOWI logo">
+      <h1>Before you begin</h1>
+      <p class="lede">A few important reminders:</p>
+      <div class="lock-notice" style="text-align:left;">
+        <p><b>1. This session is recorded.</b> Your camera, microphone, and responses are recorded for our hiring team's review.</p>
+        <p style="margin-top:12px;"><b>2. Take your time.</b> There is no time limit on this interview, but please keep your answers clear and direct.</p>
+        <p style="margin-top:12px;"><b>3. Please stay on this page.</b> Navigating away, switching tabs, or exiting full screen will restart the interview from the first question. Once you begin, please remain on this page until you've finished.</p>
+      </div>
+      <div class="setup-actions" style="justify-content:center;">
+        <button class="btn btn-primary" id="remindersNextBtn">Next →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN -1: DATA PRIVACY & CONSENT -->
+    <div class="role-wrap" id="privacyScreen" style="display:none;">
+      <img class="role-logo" id="privacyLogoImg" alt="YOWI logo">
+      <h1>Data Privacy & Consent</h1>
+      <p class="lede" style="text-align:left;">In accordance with the Data Privacy Act of 2012 (Republic Act No. 10173), YAHSHUA Outsourcing Worldwide, Inc. and The ABBA Initiative, OPC collect and process the personal information, video, audio, and responses you provide during this interview solely for recruitment and candidate evaluation purposes. Your data will be kept confidential, stored securely, and accessed only by authorized hiring personnel. It will not be shared with third parties without your consent, except as required by law.</p>
+      <p class="lede" style="text-align:left;">This interview will also ask you to briefly introduce yourself, including a short personal and family background and details about your current employment status and reasons for leaving past jobs. This information is collected solely for hiring evaluation purposes.</p>
+      <div class="lock-notice">
+        <label class="check"><input type="checkbox" id="privacyConsentCheck"> I have read and understood the above, and I voluntarily consent to the collection, recording, and processing of my personal data — including my self-introduction — for this recruitment process.</label>
+      </div>
+      <div class="status-line" id="privacyStatus"></div>
+      <div class="setup-actions" style="justify-content:center;">
+        <button class="btn btn-primary" id="privacyNextBtn">Next →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 0: ROLE PICKER -->
+    <div class="role-wrap" id="roleScreen" style="display:none;">
+      <img class="role-logo" id="roleLogoImg" alt="YOWI logo">
+      <h1>Which role are you interviewing for?</h1>
+      <p class="lede">Pick a role — the common HR screening questions plus that role's usual interview questions will load automatically.</p>
+      <div class="role-grid" id="roleGrid"></div>
+    </div>
+
+    <!-- SCREEN 1: SETUP -->
+    <div class="setup-wrap" id="setupScreen" style="display:none;">
+      <div class="setup-card">
+        <div class="pos-tag" id="setupPosTag">Position</div>
+        <h1 id="setupTitle">Initial Interview</h1>
+        <p class="lede">In a moment, you'll be asked a series of questions, read aloud by an AI interviewer. Please answer each one clearly and directly on camera — the session records automatically from start to finish.</p>
+
+        <div class="field"><label for="candName">Your full name</label><input type="text" id="candName" placeholder="e.g. Juan Dela Cruz"></div>
+        <div class="row2">
+          <div class="field"><label for="dateField">Interview date</label><input type="date" id="dateField"></div>
+        </div>
+
+        <div class="cam-block">
+          <h3>Camera & microphone</h3>
+          <p class="sub">This session is recorded automatically, start to finish — your camera, your voice, and the AI interviewer's voice together. Please allow access when your browser asks.</p>
+          <div class="cam-preview-wrap">
+            <div class="cam-preview" id="setupCamPreview">
+              <div class="cam-placeholder" id="camPlaceholder">Requesting your camera & mic…</div>
+              <video id="setupCamVideo" autoplay muted playsinline style="display:none;"></video>
+            </div>
+            <div>
+              <button class="btn btn-ghost" id="enableCamBtn" type="button" style="display:none;">🎥 Retry camera & mic</button>
+              <div class="cam-status" id="camStatus" style="margin-top:10px;">Requesting your camera & mic…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-actions">
+          <button class="back-link" id="backToRoleBtn">← Choose a different role</button>
+          <button class="btn btn-primary" id="continueToEncourageBtn">Continue →</button>
+        </div>
+        <div class="status-line" id="setupStatus"></div>
+      </div>
+    </div>
+
+    <!-- SCREEN 1.5: ENCOURAGEMENT -->
+    <div class="role-wrap" id="encourageScreen" style="display:none;">
+      <img class="role-logo" id="encourageLogoImg" alt="YOWI logo">
+      <h1>One last thing before we begin</h1>
+      <p class="lede" style="text-align:left;">You'll notice this interview covers quite a few questions, and it may take a little while to get through — that's by design. Answering these well now means you're less likely to need another full round of questions before moving further in our process, so this is genuinely worth the time you put into it.</p>
+      <p class="lede" style="text-align:left;">Take a breath, get comfortable, and just be yourself. There's no need to rush — clear, honest answers matter far more than perfectly polished ones.</p>
+      <p class="lede" style="text-align:left;"><b>Give it your best shot — we're rooting for you!</b></p>
+      <div class="setup-actions" style="justify-content:center;">
+        <button class="btn btn-primary" id="encourageStartBtn">I'm ready — Start Interview →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: FLASHER -->
+    <div class="flasher" id="flasherScreen">
+      <div class="stagehead">
+        <div class="candtag">Interviewing <b id="candTagName">—</b></div>
+        <div class="counter" id="counterText">Question 1 of 1</div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+      <div class="card">
+        <div class="part-badge" id="partBadge">Part 1 · General</div>
+        <div class="cat-badge" id="catBadge">Category</div>
+        <div class="qtext" id="qtext">Question text goes here</div>
+        <div class="qhint" id="qhint"></div>
+      </div>
+      <div class="speaking-indicator" id="speakingIndicator"></div>
+      <button class="replay-voice-btn" id="replayVoiceBtn" type="button">🔊 Replay question</button>
+
+      <div class="controls">
+        <button class="btn btn-ghost" id="prevBtn">← Previous</button>
+        <button class="btn btn-gold" id="skipBtn">Skip</button>
+        <button class="btn btn-primary" id="nextBtn">Next →</button>
+      </div>
+      <div class="kbd-hint">Use <span class="kbd">←</span> <span class="kbd">→</span> to navigate · click any question in the side list to jump</div>
+    </div>
+
+    <!-- SCREEN 3: END -->
+    <div class="end-wrap" id="endScreen">
+      <div class="stamp">✓</div>
+      <h2>Interview complete</h2>
+      <p>Thank you, <b id="endCandName">the candidate</b> — all questions have been covered. Our HR team will follow up with you regarding next steps.</p>
+      <div class="cam-status" id="endSavingLine" style="display:none; margin-bottom:10px;"></div>
+      <div class="flag-line" id="restartFlagLine" style="display:none;"></div>
+      <div class="end-actions">
+        <button class="btn btn-ghost" id="reviewBtn">Review / jump back</button>
+        <button class="btn btn-primary" id="restartBtn">Start new interview</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+document.getElementById('roleLogoImg').src = 'data:image/png;base64,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';
+
+document.getElementById('welcomeLogoImg').src = document.getElementById('roleLogoImg').src;
+document.getElementById('remindersLogoImg').src = document.getElementById('roleLogoImg').src;
+document.getElementById('privacyLogoImg').src = document.getElementById('roleLogoImg').src;
+document.getElementById('encourageLogoImg').src = document.getElementById('roleLogoImg').src;
+
+document.getElementById('welcomeNextBtn').addEventListener('click', () => {
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('remindersScreen').style.display = 'block';
+});
+
+document.getElementById('remindersNextBtn').addEventListener('click', () => {
+  document.getElementById('remindersScreen').style.display = 'none';
+  document.getElementById('privacyScreen').style.display = 'block';
+});
+
+document.getElementById('privacyNextBtn').addEventListener('click', () => {
+  const checked = document.getElementById('privacyConsentCheck').checked;
+  const statusEl = document.getElementById('privacyStatus');
+  if (!checked){
+    statusEl.textContent = "Please confirm your consent to continue.";
+    statusEl.className = 'status-line err';
+    return;
+  }
+  statusEl.textContent = '';
+  document.getElementById('privacyScreen').style.display = 'none';
+  document.getElementById('roleScreen').style.display = 'block';
+});
+
+
+/* ================= Self-Introduction (Part 0 — all roles, sensitive info) ================= */
+const SELF_INTRO_QUESTIONS = [
+  {cat:"Self-Introduction", text:"To begin, could you please give us a brief introduction of yourself? Feel free to share about your personal and family background — for example, your name, marital status, hometown, number of siblings, hobbies, and the like."},
+  {cat:"Self-Introduction", text:"What is your current employment status — are you currently employed or not? Please also share the reason(s) you left your previous job or jobs, if applicable."}
+];
+
+/* ================= Common HR Screening Questions (Part 1 — all roles) ================= */
+const GENERAL_QUESTIONS = [
+  {cat:"Education & Readiness", text:"Have you completed a Bachelor's Degree?"},
+  {cat:"Education & Readiness", text:"Are you remote-ready — do you have your own laptop or desktop, a stable internet connection, and a conducive workspace?"},
+  {cat:"Background & Achievements", text:"Did you receive any academic achievements or merit awards in high school or college? If yes, what were these?"},
+  {cat:"Background & Achievements", text:"Did you have any leadership experience in an organization or club in high school or college? If yes, share the organization or club name and your position."},
+  {cat:"Work Style", text:"Do you use AI tools such as ChatGPT, Copilot, or Claude in your workflow? If yes, how do you use them in your tasks or role?"},
+  {cat:"Fit", text:"Why should we hire you for this position? Please briefly explain."},
+  {cat:"Availability", text:"This role may require work on Saturdays or during peak periods. Are you able to meet these scheduling requirements?"},
+  {cat:"Availability", text:"Are there any recurring personal commitments that could impact your daily attendance or punctuality? If yes, please specify."},
+  {cat:"Availability", text:"How do you manage personal responsibilities to ensure you can give full attention to your work on a daily basis?"},
+  {cat:"Availability", text:"Are you able to render overtime or extended hours when operationally required?"},
+  {cat:"Fit", text:"What specifically caught your attention about this role, and what made you decide to apply?"},
+  {cat:"Fit", text:"What do you know about our company, and what made you want to be part of our team?"},
+  {cat:"Career Goals", text:"Where do you see yourself professionally in the next two to three years, and how does this role fit into that goal?"},
+  {cat:"Career Goals", text:"Do you have any plans to pursue further studies, put up a business, or take on other organizational or personal commitments within this year or the next?"},
+  {cat:"Compensation & Onboarding", text:"What is your expected salary rate or range?"},
+  {cat:"Compensation & Onboarding", text:"If offered the position, how soon can you start?"},
+  {cat:"Compensation & Onboarding", text:"If qualified, do you consent to a background check?"},
+  {cat:"Background & Achievements", text:"What do you consider your most meaningful contribution or achievement from your work or school experience so far?"}
+];
+
+/* ================= Role-specific banks (Part 2) ================= */
+const ROLE_BANKS = {
+  accounting: {
+    label: "Accounting Consultant",
+    letter: "AC",
+    blurb: "Bookkeeping, reconciliation, financial reporting, and client support.",
+    questions: [
+      {cat:"Background & Process", text:"Can you walk us through your end-to-end process in your most recent accounting role, from receiving a transaction to it being reflected in the reports?"},
+      {cat:"Background & Process", text:"Can you walk us through the monthly accounting cycle in your last role, from start to finish?"},
+      {cat:"Systems & Software", text:"What accounting software or systems are you proficient with, and which specific modules have you used — for example accounts payable, accounts receivable, invoicing, purchase orders, bank reconciliation, inventory, or general ledger?"},
+      {cat:"Systems & Software", text:"On a scale of 1 to 10, how would you rate your proficiency in the accounting software you use most? What would it take to move that closer to a 10?"},
+      {cat:"Systems & Software", text:"On a scale of 1 to 10, how fast do you learn new systems or software? Can you give an example?"},
+      {cat:"Systems & Software", text:"Are you comfortable working in Excel or Google Sheets with formulas such as VLOOKUP, SUMIF, or pivot tables? Please describe a report you've built using these."},
+      {cat:"Technical Knowledge", text:"What are your usual source documents when processing disbursements, sales, or expense transactions?"},
+      {cat:"Technical Knowledge", text:"Do you have experience preparing financial statements — balance sheet, profit and loss, cash flow, trial balance? Were these prepared manually or system-generated? Please walk us through your process."},
+      {cat:"Technical Knowledge", text:"Do you have experience with bank reconciliation? Please walk us through your process."},
+      {cat:"Technical Knowledge", text:"Do you have audit or internal audit experience? If not, do you understand how an audit is typically conducted?"},
+      {cat:"Problem-Solving", text:"Tell us about a time you found a discrepancy or an unreconciled item. How did you investigate and resolve it?"},
+      {cat:"Problem-Solving", text:"If a system generates a report that looks incorrect, how would you go about identifying and correcting the issue?"},
+      {cat:"Problem-Solving", text:"If you run into a problem with no documented solution or reference online, how would you go about troubleshooting it?"},
+      {cat:"Problem-Solving", text:"Tell us about a mistake you made at work. What happened, and how did you handle it?"},
+      {cat:"Client & Stakeholder Handling", text:"Tell us about a difficult client, vendor, or partner you've handled. What was the situation, and what did you do?"},
+      {cat:"Client & Stakeholder Handling", text:"How would you explain a financial report or an accounting issue to someone with no accounting background?"},
+      {cat:"Client & Stakeholder Handling", text:"If a client is waiting for a resolution but you don't have an answer yet, how would you manage that communication?"},
+      {cat:"Prioritization & Time Management", text:"How do you prioritize when you're faced with multiple urgent deadlines at the same time?"},
+      {cat:"Prioritization & Time Management", text:"Walk us through how you would handle this: you have a report due today, a client needs urgent support, and management asks for an update within 30 minutes. What would you do first, second, and third?"},
+      {cat:"Leadership & People Management", text:"Have you supervised or led a team before? How many people, and what were your day-to-day responsibilities?"},
+      {cat:"Leadership & People Management", text:"Tell us about a time you had a conflict within your team. How did you handle it?"},
+      {cat:"Process Improvement & Policy", text:"Tell us about a time you identified an inefficient process and improved it. What did you do?"},
+      {cat:"Process Improvement & Policy", text:"Do you have any experience drafting or revising accounting policies or standard operating procedures?"},
+      {cat:"Process Improvement & Policy", text:"If you're working with manual reports or templates, what controls do you put in place to catch errors before they go out?"},
+      {cat:"Career Journey & Self-Reflection", text:"Can you walk us through your professional journey so far? What were your key takeaways or learnings, and what would you like to learn more about?"},
+      {cat:"Career Journey & Self-Reflection", text:"Tell us about a time you had to learn a completely new system or process. How did you adjust?"},
+      {cat:"Career Journey & Self-Reflection", text:"What specific tasks in accounting do you enjoy the most, and why?"},
+      {cat:"Career Journey & Self-Reflection", text:"Based on your experience, what would you consider your strongest technical competency?"},
+      {cat:"Career Journey & Self-Reflection", text:"What type of work environment or team helps you perform at your best?"},
+      {cat:"Career Journey & Self-Reflection", text:"Is there a specific contribution, project, or task from your work experience that you're especially proud of? Please tell us about it."},
+      {cat:"Motivation & Growth", text:"What attracted you to a career in accounting?"},
+      {cat:"Motivation & Growth", text:"Where do you see your accounting career growing, and what skills are you hoping to build in this role?"}
+    ]
+  },
+
+  payroll: {
+    label: "Payroll Consultant",
+    letter: "PC",
+    blurb: "Client-facing payroll processing, accuracy, and confidentiality under pressure.",
+    questions: [
+      {cat:"Learning Agility & Trainability", text:"Tell me about a time you had to learn something completely new with very little guidance. How did you approach it?"},
+      {cat:"Learning Agility & Trainability", text:"If I give you a payroll process to learn today, how would you make sure you learn it quickly and correctly?"},
+      {cat:"Learning Agility & Trainability", text:"You're learning the current YAHSHUA payroll system, but a new system will soon be introduced. How would you handle learning both at the same time?"},
+      {cat:"Learning Agility & Trainability", text:"You ask if there's a manual or documentation for a task, and your manager says there isn't one. What would you do?"},
+
+      {cat:"Client Handling — Payroll Week Scenario", text:"Scenario: It's Friday afternoon, right in the middle of payroll week. You're juggling several client accounts. At 2:00 PM, an employee from a client company messages you directly, upset — she says ₱500 is missing from her salary and needs it sorted before the day ends.\n\nWhat do you do first, and how would you explain the situation to her?", hint:"Part 1 of 3 in this scenario — the story continues in the next question."},
+      {cat:"Client Handling — Payroll Week Scenario", text:"Continuing the scenario: You check the records and your computation is correct — no error on your end. But at 3:00 PM, the HR/Payroll Officer from that same client calls, insisting the payroll is wrong and won't let it go even after you show them the numbers.\n\nHow do you handle that conversation with the HR Officer?", hint:"Part 2 of 3."},
+      {cat:"Client Handling — Payroll Week Scenario", text:"Continuing further: two other clients now message you with unrelated urgent concerns. It's near payroll cutoff, and one of your bigger clients — more employees, pays more for the service — says they should've been handled first. Someone on their team also asks a payroll policy question you're honestly not sure about.\n\nHow do you prioritize everything happening at once, what do you tell the bigger client, and what do you do about the question you don't know the answer to?", hint:"Part 3 of 3."},
+
+      {cat:"Integrity & Confidentiality", text:"You have access to payroll information, and a friend asks you to disclose another employee's salary. How would you respond?"},
+
+      {cat:"Working with Managers & Hierarchy", text:"Imagine your manager gives you instructions for a task, but partway through, you realize the instructions were actually wrong. How would you raise this with your manager — and what would you do if they insisted they were right simply because they're more senior?"},
+      {cat:"Working with Managers & Hierarchy", text:"Now imagine a different situation: you've proposed an idea you genuinely believe would help the team or a client, but your manager turns it down. How would you handle that, and how do you generally go about communicating ideas or collaborating with leaders and other departments?"},
+
+      {cat:"Resilience & Self-Awareness", text:"Tell me about a mistake you made at work — how you discovered it, what you did afterward, and how management responded."},
+      {cat:"Resilience & Self-Awareness", text:"Looking back on your career, what's the most difficult period you've had to push through? Was there ever a point you thought about quitting, and what kept you going — including through the parts of the job that felt repetitive or draining?"},
+      {cat:"Resilience & Self-Awareness", text:"How do you take criticism or negative feedback, and what work skills or personal qualities do you feel you still need to work on?"},
+
+      {cat:"Career Journey & Self-Reflection", text:"Can you walk us through your career journey so far — from where you started to where you are now? What were your key takeaways, and what do you still want to learn more about?"},
+      {cat:"Career Journey & Self-Reflection", text:"What specific part of payroll work do you enjoy the most — processing, client handling, reconciliation, or something else — and why?"},
+      {cat:"Career Journey & Self-Reflection", text:"Based on your experience, what would you consider your strongest skill when it comes to payroll accuracy or client handling?"},
+      {cat:"Career Journey & Self-Reflection", text:"What type of work environment or team helps you perform at your best?"},
+      {cat:"Career Journey & Self-Reflection", text:"Is there a specific contribution, project, or situation you handled that you're especially proud of? Please tell us about it."},
+
+      {cat:"Motivation & Growth", text:"What attracted you to a career in payroll?"},
+      {cat:"Motivation & Growth", text:"Where do you see your payroll career growing, and what skills are you hoping to build in this role?"}
+    ]
+  },
+
+  sales: {
+    label: "Sales Officer / Consultant",
+    letter: "SO",
+    blurb: "Lead generation, client pitching, objection handling, and field work.",
+    questions: [
+      {cat:"Sales Acumen", text:"What's the difference between marketing and sales, in your view? If we hired you today, what do you think would be the hardest part of joining our sales team?"},
+      {cat:"Handling Rejection & Resilience", text:"If a client gives you negative feedback or declines your offer, how do you handle that? And tell me about a mistake you've made — in school, an internship, or otherwise — that helped you mature."},
+      {cat:"Tools & Adaptability", text:"Give me a real example of how you've used ChatGPT or another AI tool, and how it helped you. Do you have any experience editing videos with AI tools?"},
+      {cat:"Field Work & Flexibility", text:"This role involves regular field visits, including travel to the client's principal office for face-to-face client meetings. Would that be an issue for you?"},
+      {cat:"Self-Improvement & Closing", text:"What's one thing you feel you need to improve on, especially in sales, that we could support you with? And — convince me: why should we choose you over other applicants?"},
+      {cat:"Sales Skills", text:"Say you get a random lead — someone who might be interested but hasn't talked to us yet. Walk me through what you'd actually do, step by step, from that first contact all the way to closing the deal."},
+      {cat:"Sales Skills", text:"How would you go about finding clients for YAHSHUA in the first place — where would you look, who would you talk to, and how would you keep track of everyone you're talking to so nothing falls through the cracks?"},
+      {cat:"Sales Skills", text:"Tell me about a big deal or sales goal you hit — or didn't. What happened, and what would you do differently?", hint:"Ask this version if the candidate has prior sales experience."},
+      {cat:"Sales Skills", text:"Tell me about a time you had to convince someone of something — a professor, a group mate, a customer. How'd you do it, and did it work?", hint:"Fresh-graduate alternate — ask instead of the above if the candidate has no direct sales experience."},
+      {cat:"Sales Skills", text:"Let's say you're demoing our system to a small 20-person company, then later to a 500-person company. Would you pitch it the same way to both? Why or why not?"},
+      {cat:"Sales Skills", text:"Have you sold anything like payroll, HR, or software before? If not — how would you get comfortable enough with our product to sell it confidently?"},
+      {cat:"Sales Skills", text:"If a client says \"your competitor is cheaper,\" what would you say back — without trashing the competitor?"},
+      {cat:"Sales Skills", text:"Tell me about a time a client pushed back on price. How'd you handle it?", hint:"Ask this version if the candidate has prior sales experience."},
+      {cat:"Sales Skills", text:"Let's role-play — I'm a client and I just told you your price is too high compared to someone else. Convince me right now.", hint:"Fresh-graduate alternate — ask instead of the above if the candidate has no direct sales experience."},
+
+      {cat:"Career Journey & Self-Reflection", text:"Can you walk us through your career journey so far — from where you started to where you are now? What were your key takeaways, and what do you still want to learn more about?"},
+      {cat:"Career Journey & Self-Reflection", text:"What part of the sales process do you enjoy the most — prospecting, pitching, negotiating, or closing — and why?"},
+      {cat:"Career Journey & Self-Reflection", text:"Based on your experience, what would you consider your strongest skill as a sales professional?"},
+      {cat:"Career Journey & Self-Reflection", text:"What type of work environment or team helps you perform at your best?"},
+      {cat:"Career Journey & Self-Reflection", text:"Is there a specific deal, campaign, or client relationship you're especially proud of? Please tell us about it."},
+
+      {cat:"Motivation & Growth", text:"What attracted you to a career in sales?"},
+      {cat:"Motivation & Growth", text:"Where do you see your sales career growing, and what skills are you hoping to build in this role?"}
+    ]
+  },
+
+  qa: {
+    label: "QA",
+    letter: "QA",
+    blurb: "Follows up on a completed technical assessment — testing judgment, tools, and bug communication.",
+    questions: [
+      {cat:"Technical Assessment Walkthrough", text:"Before writing any test cases, how did you determine what needed to be tested?"},
+      {cat:"Technical Assessment Walkthrough", text:"Can you give me three edge cases that were not part of your main happy path?"},
+      {cat:"Technical Assessment Walkthrough", text:"Walk me through your technical assessment — what you did, why you approached it that way, and what bugs or findings you discovered. Show us a few of your test cases and explain your implementation choices."},
+      {cat:"Technical Assessment Walkthrough", text:"Why did you use Cypress specifically for automation? And walk me through one of your test implementations — what does it do, and why'd you design it that way?"},
+      {cat:"Technical Assessment Walkthrough", text:"If a UI element or element type changes, what happens to your automated test? How did you decide on the test data or numerical values you used?"},
+      {cat:"Domain & Validation Judgment", text:"Why should negative values not be allowed in a payroll application? Did you verify the documentation and payroll brackets provided were accurate — how did you validate them?"},
+      {cat:"Domain & Validation Judgment", text:"Besides negative values, what other invalid inputs would you test in this payroll application?"},
+      {cat:"Self-Reflection on the Assessment", text:"How did you find the assessment overall — what made it difficult, and which part was actually harder: the setup, or the test case design and application testing itself?"},
+      {cat:"Self-Reflection on the Assessment", text:"Which test scenarios would you automate, and which would you keep as manual tests? Why?"},
+      {cat:"Self-Reflection on the Assessment", text:"Looking back at your assessment, is there anything you would improve or test differently now?"},
+      {cat:"Company Fit & Real-World Exposure", text:"What do you know about our company? Did you get a chance to ask anyone about their actual experience using YAHSHUA Payroll — and if you ran into errors while testing it, what would you do about them?"},
+      {cat:"Company Fit & Real-World Exposure", text:"How do you communicate a bug to a developer once you've found it?"},
+      {cat:"QA Philosophy & Prioritization", text:"From a QA perspective — is it more important to launch on schedule, or delay until it's completely bug-free? How do you personally balance speed vs. quality, and how do you decide what's high-priority vs. low-priority when triaging bugs?"},
+
+      {cat:"Career Journey & Self-Reflection", text:"Can you walk us through your career journey so far — from where you started to where you are now? What were your key takeaways, and what do you still want to learn more about?"},
+      {cat:"Career Journey & Self-Reflection", text:"What specific part of QA work do you enjoy the most — test design, automation, exploratory testing, or something else — and why?"},
+      {cat:"Career Journey & Self-Reflection", text:"Based on your experience, what would you consider your strongest skill as a QA professional?"},
+      {cat:"Career Journey & Self-Reflection", text:"What type of work environment or team helps you perform at your best?"},
+      {cat:"Career Journey & Self-Reflection", text:"Is there a specific project, bug, or test case you're especially proud of? Please tell us about it."},
+
+      {cat:"Motivation & Growth", text:"What attracted you to a career in QA or software testing?"},
+      {cat:"Motivation & Growth", text:"Where do you see your QA career growing, and what skills are you hoping to build in this role?"},
+      {cat:"Motivation & Growth", text:"What do you hope to contribute as a QA here? Give me one thing that convinces me to hire you."},
+      {cat:"Motivation & Growth", text:"Tell me about a time you spotted a flaw in a QA process or test strategy — how did you raise your suggestion with the team?"},
+      {cat:"Motivation & Growth", text:"A developer says, \"I can't reproduce the bug.\" How would you handle the situation?"}
+    ]
+  }
+};
+
+/* ============================================================================
+   ADMIN CONFIG — set this before sending the file to applicants.
+   The applicant never sees or chooses any of this; it just works automatically.
+
+   SECURITY NOTE: this file has no backend, so any key pasted below travels
+   inside the HTML and could be read by anyone who views the page source.
+   Only distribute this file to applicants over a channel you trust, and use
+   a key you're comfortable being embedded client-side (e.g. a low-limit /
+   restricted key). Leave voiceApiKey blank to fall back automatically to the
+   free built-in browser voice — no key exposure at all.
+
+   ElevenLabs voice IDs you can drop into voiceId:
+     21m00Tcm4TlvDq8ikWAM  Rachel — warm, professional (F)
+     EXAVITQu4vr4xnSDxMaL  Bella — friendly, clear (F)
+     pNInz6obpgDQGcFmaJgB  Adam — calm, professional (M)
+     TxGEqnHWrfWFTfGW9XjX  Josh — natural, easygoing (M)
+   OpenAI TTS voices you can drop into voiceId: alloy, nova, onyx, shimmer
+
+   Google Drive auto-upload (optional, 100% free — no Google Cloud project, no
+   billing account, ever): deploy the small Apps Script Web App described in
+   the setup guide, then paste its URL and your chosen secret below. Recordings
+   upload automatically and silently at the end of every interview — nobody
+   has to sign in or click "connect." Leave appsScriptUrl blank to skip Drive
+   entirely and just use the manual download button.
+   ============================================================================ */
+const ADMIN_CONFIG = {
+  voiceProvider: 'browser',      // 'elevenlabs' | 'openai' | 'browser'
+  voiceApiKey: '',
+  voiceId: '21m00Tcm4TlvDq8ikWAM',
+
+  appsScriptUrl: '',
+  appsScriptSecret: '',
+  driveFolderId: '',             // optional — leave blank to save to your Drive root
+
+  // The recording uploads itself in small pieces throughout the interview — Apps Script
+  // stitches them into ONE file on your Drive as they arrive. The applicant never sees or
+  // does anything for this, and it works regardless of how long the interview runs, since no
+  // single upload ever carries more than a couple of minutes of video.
+  videoBitsPerSecond: 500000,     // ~500kbps video
+  audioBitsPerSecond: 48000,      // ~48kbps audio
+  flushIntervalSeconds: 120,      // send the recorded-so-far piece to Drive every 2 minutes
+  uploadRetries: 4                // retry attempts per piece before it's queued for the next round
+};
+
+/* ================= State ================= */
+let deck = [];
+let current = 0;
+let timerSeconds = 0;
+let timerInterval = null;
+let candidateName = "";
+let selectedRoleKey = null;
+
+/* ---- New: camera / recording / voice / anti-cheat state ---- */
+let mediaStream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let interviewActive = false;
+let restartCount = 0;
+let voiceProvider = ADMIN_CONFIG.voiceApiKey ? ADMIN_CONFIG.voiceProvider : 'browser';
+let voiceApiKeyVal = ADMIN_CONFIG.voiceApiKey;
+let voiceIdVal = ADMIN_CONFIG.voiceId;
+let browserVoice = null;
+let ignoreNextExit = false;
+
+/* ---- Canvas compositing for recording (self-drawn interview screen + webcam, no OS screen-share prompt) ---- */
+let combinedRecordStream = null;
+let audioCtx = null;
+let micSourceNode = null;
+let audioDestNode = null;
+let drawRafId = null;
+let compositeActive = false;
+let recordCanvas = null, recordCtx = null;
+let camSourceVideo = null;
+
+/* ---- Background chunked recording/upload state ---- */
+let recordingSessionId = null;
+let pendingChunks = [];
+let uploadInFlight = false;
+let flushTimerId = null;
+
+/* ---- Google Drive auto-upload state ---- */
+let driveUploadEnabled = !!ADMIN_CONFIG.appsScriptUrl;
+
+const roleScreen = document.getElementById('roleScreen');
+const setupScreen = document.getElementById('setupScreen');
+const flasherScreen = document.getElementById('flasherScreen');
+const endScreen = document.getElementById('endScreen');
+const sidebar = document.getElementById('sidebar');
+const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+const topMeta = document.getElementById('topMeta');
+
+/* ---- Build role picker cards ---- */
+const roleGrid = document.getElementById('roleGrid');
+Object.keys(ROLE_BANKS).forEach(key => {
+  const r = ROLE_BANKS[key];
+  const card = document.createElement('div');
+  card.className = 'role-card';
+  card.innerHTML = `<div class="rletter">${r.letter}</div><h3>${r.label}</h3><p>${r.blurb}</p><div class="qcount">${r.questions.length} role-specific questions</div>`;
+  card.addEventListener('click', () => selectRole(key));
+  roleGrid.appendChild(card);
+});
+
+function selectRole(key){
+  selectedRoleKey = key;
+  const r = ROLE_BANKS[key];
+  document.getElementById('setupPosTag').textContent = r.label;
+  document.getElementById('setupTitle').textContent = r.label + " — Initial Interview";
+  roleScreen.style.display = 'none';
+  setupScreen.style.display = 'block';
+  requestCameraAndMic();
+}
+
+document.getElementById('backToRoleBtn').addEventListener('click', () => {
+  setupScreen.style.display = 'none';
+  roleScreen.style.display = 'block';
+});
+
+function pickBrowserVoice(){
+  const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  if (!voices.length) return null;
+  const preferred = ['Google US English','Google UK English Female','Microsoft Aria Online (Natural)','Microsoft Jenny Online (Natural)','Samantha','Microsoft Zira'];
+  for (const name of preferred){ const m = voices.find(v => v.name.includes(name)); if (m) return m; }
+  const enFemale = voices.find(v => v.lang && v.lang.startsWith('en') && /female|aria|jenny|samantha|zira|susan/i.test(v.name));
+  if (enFemale) return enFemale;
+  const en = voices.find(v => v.lang && v.lang.startsWith('en'));
+  return en || voices[0];
+}
+if (window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged = () => { browserVoice = pickBrowserVoice(); };
+  browserVoice = pickBrowserVoice();
+}
+
+async function speakText(text){
+  const indicator = document.getElementById('speakingIndicator');
+  if (indicator) indicator.textContent = 'AI interviewer speaking…';
+  try{
+    if (voiceProvider === 'browser' || !voiceApiKeyVal){
+      await speakBrowser(text);
+    } else if (voiceProvider === 'elevenlabs'){
+      await speakElevenLabs(text);
+    } else if (voiceProvider === 'openai'){
+      await speakOpenAI(text);
+    }
+  } catch(err){
+    console.error('Voice playback failed, falling back to browser voice:', err);
+    try { await speakBrowser(text); } catch(e2){}
+  } finally {
+    if (indicator) indicator.textContent = '';
+  }
+}
+
+function speakBrowser(text){
+  return new Promise((resolve) => {
+    if (!window.speechSynthesis){ resolve(); return; }
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (browserVoice) u.voice = browserVoice;
+    u.rate = 0.98; u.pitch = 1.03; u.volume = 1;
+    u.onend = resolve; u.onerror = resolve;
+    window.speechSynthesis.speak(u);
+  });
+}
+
+async function speakElevenLabs(text){
+  const voiceId = voiceIdVal || VOICE_OPTIONS.elevenlabs[0].id;
+  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'xi-api-key': voiceApiKeyVal, 'Accept':'audio/mpeg' },
+    body: JSON.stringify({ text, model_id:'eleven_multilingual_v2', voice_settings:{ stability:0.45, similarity_boost:0.8, style:0.35, use_speaker_boost:true } })
+  });
+  if (!res.ok) throw new Error('ElevenLabs request failed: ' + res.status);
+  const blob = await res.blob();
+  await playAudioBlob(blob);
+}
+
+async function speakOpenAI(text){
+  const voice = voiceIdVal || 'alloy';
+  const res = await fetch('https://api.openai.com/v1/audio/speech', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization': 'Bearer ' + voiceApiKeyVal },
+    body: JSON.stringify({ model:'tts-1-hd', voice, input:text, speed:0.98 })
+  });
+  if (!res.ok) throw new Error('OpenAI TTS request failed: ' + res.status);
+  const blob = await res.blob();
+  await playAudioBlob(blob);
+}
+
+function ensureAudioGraph(){
+  if (!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioDestNode = audioCtx.createMediaStreamDestination();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  if (mediaStream && !micSourceNode){
+    micSourceNode = audioCtx.createMediaStreamSource(mediaStream);
+    micSourceNode.connect(audioDestNode);
+  }
+}
+
+async function playAudioBlob(blob){
+  ensureAudioGraph();
+  const arrayBuffer = await blob.arrayBuffer();
+  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+  return new Promise((resolve, reject) => {
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioDestNode);       // feeds the recording
+    source.connect(audioCtx.destination); // still audible to whoever is watching live
+    source.onended = resolve;
+    try{ source.start(0); } catch(err){ reject(err); }
+  });
+}
+
+/* Note: native browser speechSynthesis output cannot be routed into the Web Audio graph,
+   so it is NOT captured cleanly in the recording — use ElevenLabs or OpenAI for a fully
+   audible AI voice in the saved video. Browser voice still plays live for whoever is present. */
+
+/* ---- Canvas rendering of the actual interview screen + webcam (no OS screen-share prompt at all —
+   the recording is built by drawing the same question/progress/timer state the applicant sees) ---- */
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines){
+  const paragraphs = String(text).split('\n');
+  let lines = [];
+  paragraphs.forEach(p => {
+    const words = p.split(' ');
+    let line = '';
+    words.forEach(word => {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && line){ lines.push(line); line = word; }
+      else { line = test; }
+    });
+    lines.push(line);
+  });
+  if (maxLines && lines.length > maxLines) lines = lines.slice(0, maxLines);
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i*lineHeight));
+  return lines.length;
+}
+
+function startCanvasComposite(){
+  recordCanvas = document.getElementById('recordCanvas');
+  recordCtx = recordCanvas.getContext('2d');
+  camSourceVideo = document.getElementById('camSourceVideo');
+  camSourceVideo.srcObject = mediaStream;
+  compositeActive = true;
+
+  function draw(){
+    if (!compositeActive){ drawRafId = null; return; }
+    const w = recordCanvas.width, h = recordCanvas.height;
+    const ctx = recordCtx;
+
+    ctx.fillStyle = '#f6f4ee'; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#0f1b2d'; ctx.fillRect(0, 0, w, 66);
+    ctx.fillStyle = '#e7cd8f'; ctx.font = '600 16px Georgia, serif'; ctx.textAlign = 'left';
+    ctx.fillText('YOWI / TAI · AI-Facilitated Interview', 30, 40);
+    ctx.fillStyle = '#f6f4ee'; ctx.font = '13px Arial, sans-serif'; ctx.textAlign = 'right';
+    const posLabel = document.getElementById('topPosition') ? document.getElementById('topPosition').textContent : '';
+    const timeLabel = document.getElementById('timerDisplay') ? document.getElementById('timerDisplay').textContent : '00:00';
+    ctx.fillText(`${candidateName || ''}  ·  ${posLabel}  ·  ${timeLabel}`, w - 30, 40);
+    ctx.textAlign = 'left';
+
+    const q = deck[current];
+    if (q){
+      const pct = (deck.length - 1) ? current / (deck.length - 1) : 0;
+      ctx.fillStyle = '#eae6da'; ctx.fillRect(60, 96, w - 120, 8);
+      ctx.fillStyle = '#c99a3d'; ctx.fillRect(60, 96, (w - 120) * pct, 8);
+
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#d8d2c1'; ctx.lineWidth = 1;
+      roundRect(ctx, 60, 136, w - 120, 400, 20); ctx.fill(); ctx.stroke();
+
+      ctx.font = '700 11px Arial, sans-serif';
+      const partLabel = q.part.toUpperCase();
+      const partW = ctx.measureText(partLabel).width + 36;
+      ctx.fillStyle = '#1d3157'; roundRect(ctx, 88, 162, partW, 28, 14); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.fillText(partLabel, 106, 181);
+
+      ctx.fillStyle = '#c99a3d'; ctx.font = '700 13px Arial, sans-serif';
+      ctx.fillText(q.cat.toUpperCase(), 88, 224);
+
+      ctx.fillStyle = '#1b2333'; ctx.font = '27px Georgia, serif';
+      wrapCanvasText(ctx, q.text, 88, 268, w - 296, 38, 9);
+
+      ctx.fillStyle = '#5b6577'; ctx.font = '13px Arial, sans-serif';
+      ctx.fillText(`Question ${current + 1} of ${deck.length}`, 88, h - 60);
+    }
+
+    if (camSourceVideo && camSourceVideo.videoWidth){
+      const cw = 250, chh = 188, pad = 30;
+      const cx = w - cw - pad, cy = h - chh - pad;
+      ctx.save();
+      ctx.translate(cx + cw, cy); ctx.scale(-1, 1);
+      ctx.drawImage(camSourceVideo, 0, 0, cw, chh);
+      ctx.restore();
+      ctx.strokeStyle = '#c99a3d'; ctx.lineWidth = 3;
+      ctx.strokeRect(cx, cy, cw, chh);
+    }
+
+    drawRafId = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+async function buildCombinedRecordStream(){
+  startCanvasComposite();
+  ensureAudioGraph();
+  const canvasStream = recordCanvas.captureStream(30);
+  combinedRecordStream = new MediaStream([
+    ...canvasStream.getVideoTracks(),
+    ...audioDestNode.stream.getAudioTracks()
+  ]);
+  return combinedRecordStream;
+}
+
+function teardownScreenCapture(){
+  compositeActive = false;
+  if (drawRafId){ cancelAnimationFrame(drawRafId); drawRafId = null; }
+}
+
+/* ---- Google Drive auto-save: uploads small pieces silently in the background throughout
+   the interview. Apps Script stitches them into ONE file on your Drive as they arrive — the
+   applicant never sees this, never downloads anything, and it isn't limited by interview
+   length since no single request ever carries more than a couple of minutes of video. ---- */
+function newSessionId(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+}
+
+function blobToBase64(blob){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(String(reader.result).split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function sendChunkToDrive(sessionIdVal, blob, filename, isFinal){
+  if (!ADMIN_CONFIG.appsScriptUrl) return false;
+  try{
+    const dataBase64 = await blobToBase64(blob);
+    const payload = {
+      secret: ADMIN_CONFIG.appsScriptSecret,
+      sessionId: sessionIdVal,
+      filename,
+      dataBase64,
+      isFinal: !!isFinal,
+      folderId: ADMIN_CONFIG.driveFolderId || ''
+    };
+    const res = await fetch(ADMIN_CONFIG.appsScriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // keeps this a "simple request" so Apps Script's CORS response can be read
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json().catch(() => null);
+    return !!(json && json.ok);
+  } catch(err){
+    console.error('Chunk upload failed:', err);
+    return false;
+  }
+}
+
+async function sendChunkWithRetry(sessionIdVal, blob, filename, isFinal, attempts){
+  for (let i = 0; i < attempts; i++){
+    const ok = await sendChunkToDrive(sessionIdVal, blob, filename, isFinal);
+    if (ok) return true;
+    await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+  }
+  return false;
+}
+
+function discardDriveSession(sessionIdVal){
+  if (!sessionIdVal || !ADMIN_CONFIG.appsScriptUrl) return;
+  fetch(ADMIN_CONFIG.appsScriptUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ secret: ADMIN_CONFIG.appsScriptSecret, sessionId: sessionIdVal, action: 'discard' })
+  }).catch(() => {});
+}
+
+/* ---- Camera / recording ---- */
+async function requestCameraAndMic(){
+  const statusEl = document.getElementById('camStatus');
+  const retryBtn = document.getElementById('enableCamBtn');
+  statusEl.textContent = 'Requesting your camera & mic…'; statusEl.className = 'cam-status';
+  retryBtn.style.display = 'none';
+  try{
+    mediaStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
+    const vid = document.getElementById('setupCamVideo');
+    vid.srcObject = mediaStream;
+    vid.style.display = 'block';
+    document.getElementById('camPlaceholder').style.display = 'none';
+    statusEl.textContent = 'Your camera & mic are ready.'; statusEl.className = 'cam-status ok';
+  } catch(err){
+    console.error('getUserMedia failed:', err.name, err.message);
+    let reason = 'We could not access your camera/mic. Please allow access and try again.';
+    if (err.name === 'NotAllowedError') reason = 'Camera/mic access was blocked. Check your browser\'s site permissions for this page and allow camera + microphone, then retry.';
+    else if (err.name === 'NotFoundError') reason = 'No camera or microphone was detected on this device.';
+    else if (err.name === 'NotReadableError') reason = 'Your camera/mic is already in use by another app. Close other apps using it and retry.';
+    else if (err.name === 'SecurityError') reason = 'This page must be opened over https:// (or localhost) for camera/mic access to work.';
+    statusEl.textContent = reason + ' (' + err.name + ')'; statusEl.className = 'cam-status err';
+    retryBtn.style.display = 'inline-block';
+  }
+}
+document.getElementById('enableCamBtn').addEventListener('click', requestCameraAndMic);
+
+function pickRecorderMimeType(){
+  let mimeType = 'video/webm;codecs=vp9,opus';
+  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8,opus';
+  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+  return mimeType;
+}
+
+function recordingFilename(){
+  const safeName = (candidateName || 'candidate').replace(/[^a-z0-9]+/gi, '_');
+  const roleBank = selectedRoleKey ? ROLE_BANKS[selectedRoleKey] : null;
+  const safeRole = roleBank ? roleBank.label.replace(/[^a-z0-9]+/gi, '') : 'Role';
+  const dateVal = document.getElementById('dateField') ? document.getElementById('dateField').value : '';
+  const safeDate = dateVal || new Date().toISOString().slice(0, 10);
+  return `${safeName}_${safeRole}_${safeDate}.webm`;
+}
+
+async function flushPendingChunks(){
+  if (!driveUploadEnabled || uploadInFlight || pendingChunks.length === 0) return;
+  uploadInFlight = true;
+  try{
+    const combined = new Blob(pendingChunks, { type:'video/webm' });
+    const ok = await sendChunkWithRetry(recordingSessionId, combined, recordingFilename(), false, 1);
+    if (ok) pendingChunks = []; // only clear once Drive has confirmed it — otherwise keep buffering and retry next round
+  } finally {
+    uploadInFlight = false;
+  }
+}
+
+function startRecording(stream){
+  if (!stream) return;
+  recordedChunks = [];
+  pendingChunks = [];
+  uploadInFlight = false;
+  recordingSessionId = newSessionId();
+  const mimeType = pickRecorderMimeType();
+  mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: ADMIN_CONFIG.videoBitsPerSecond, audioBitsPerSecond: ADMIN_CONFIG.audioBitsPerSecond });
+  mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) pendingChunks.push(e.data); };
+  mediaRecorder.start(1000);
+  document.getElementById('recBadge').classList.add('active');
+  if (driveUploadEnabled){
+    flushTimerId = setInterval(flushPendingChunks, ADMIN_CONFIG.flushIntervalSeconds * 1000);
+  }
+}
+
+async function stopRecording(){
+  clearInterval(flushTimerId);
+  document.getElementById('recBadge').classList.remove('active');
+  await new Promise((resolve) => {
+    if (!mediaRecorder || mediaRecorder.state === 'inactive'){ resolve(); return; }
+    mediaRecorder.onstop = resolve;
+    mediaRecorder.stop();
+  });
+  while (uploadInFlight){ await new Promise(r => setTimeout(r, 200)); } // let any in-progress flush finish first
+  if (!driveUploadEnabled) return false;
+  const combined = new Blob(pendingChunks, { type:'video/webm' });
+  if (combined.size === 0){
+    console.warn('Recording produced no data to upload — nothing was sent to Drive.');
+    return false;
+  }
+  const ok = await sendChunkWithRetry(recordingSessionId, combined, recordingFilename(), true, ADMIN_CONFIG.uploadRetries);
+  if (ok) pendingChunks = [];
+  return ok;
+}
+
+function discardRecording(){
+  clearInterval(flushTimerId);
+  document.getElementById('recBadge').classList.remove('active');
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  discardDriveSession(recordingSessionId);
+  recordedChunks = [];
+  pendingChunks = [];
+}
+
+/* ---- Anti-cheat: fullscreen + tab/window focus lock ---- */
+function enterLockedFullscreen(){
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+  if (req) req.call(el).catch(() => {});
+}
+function exitFullscreenIfAny(){
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+}
+
+function isFullscreenActive(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+}
+
+function handlePossibleExit(){
+  if (!interviewActive || ignoreNextExit) return;
+  // Debounce: re-check after a brief pause so a momentary flicker (e.g. the fullscreen
+  // transition itself briefly reporting "not fullscreen") doesn't trigger a false restart -
+  // only a state that's still true a moment later counts as a genuine exit.
+  setTimeout(() => {
+    if (!interviewActive || ignoreNextExit) return;
+    if (document.hidden || !isFullscreenActive()){
+      triggerExitRestart();
+    }
+  }, 1200);
+}
+
+document.addEventListener('visibilitychange', () => { if (document.hidden) handlePossibleExit(); });
+document.addEventListener('fullscreenchange', () => { if (interviewActive && !isFullscreenActive()) handlePossibleExit(); });
+// Note: a raw window "blur" listener was removed here - it fired on things like opening
+// DevTools or clicking browser chrome, not just actually leaving the interview, which caused
+// false-positive restarts (and duplicate saved recordings). visibilitychange (tab switch/
+// minimize) and fullscreenchange (exiting fullscreen) below are the reliable signals.
+
+function triggerExitRestart(){
+  if (!interviewActive) return;
+  interviewActive = false;
+  restartCount++;
+  discardRecording();
+  teardownScreenCapture();
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  document.getElementById('exitOverlay').classList.add('active');
+}
+
+document.getElementById('exitAckBtn').addEventListener('click', async () => {
+  document.getElementById('exitOverlay').classList.remove('active');
+  ignoreNextExit = true;
+  enterLockedFullscreen();
+  try{
+    const stream = await buildCombinedRecordStream();
+    setTimeout(() => {
+      ignoreNextExit = false;
+      current = 0;
+      interviewActive = true;
+      startRecording(stream);
+      startTimer();
+      render();
+      document.getElementById('camCorner').classList.add('active');
+    }, 1600);
+  } catch(err){
+    ignoreNextExit = false;
+    alert("Something went wrong resuming the interview. Please click Continue again.");
+  }
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => go(1));
+document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+document.getElementById('skipBtn').addEventListener('click', () => go(1, true));
+document.getElementById('replayVoiceBtn').addEventListener('click', () => { const q = deck[current]; if (q) speakText(q.text); });
+document.getElementById('restartBtn').addEventListener('click', () => location.reload());
+document.getElementById('reviewBtn').addEventListener('click', () => { current = 0; showFlasher(); render(); });
+toggleSidebarBtn.addEventListener('click', () => sidebar.classList.toggle('hidden'));
+
+document.addEventListener('keydown', (e) => {
+  if (flasherScreen.classList.contains('active')) {
+    if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'ArrowLeft') go(-1);
+  }
+});
+
+document.getElementById('continueToEncourageBtn').addEventListener('click', () => {
+  if (!selectedRoleKey){ alert("Please choose a role first."); return; }
+  const statusEl = document.getElementById('setupStatus');
+  if (!mediaStream){
+    statusEl.textContent = "Please enable your camera & microphone before continuing.";
+    statusEl.className = 'status-line err';
+    document.getElementById('setupCamPreview').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  statusEl.textContent = '';
+  statusEl.className = 'status-line';
+  setupScreen.style.display = 'none';
+  document.getElementById('encourageScreen').style.display = 'block';
+});
+
+document.getElementById('encourageStartBtn').addEventListener('click', (e) => {
+  e.target.disabled = true;
+  e.target.textContent = 'Preparing your interview…';
+  startInterview();
+});
+
+function startInterview(){
+  const roleBank = ROLE_BANKS[selectedRoleKey];
+  candidateName = document.getElementById('candName').value.trim() || "the candidate";
+
+  // Create/resume the AudioContext right in this click handler so the browser ties audio
+  // playback permission to this user gesture - the pure Web Audio API approach used below
+  // doesn't need an <audio> element, so no separate "unlock" trick is required.
+  ensureAudioGraph();
+
+  deck = [];
+  SELF_INTRO_QUESTIONS.forEach(q => deck.push({...q, part:"Part 0 · Self-Introduction"}));
+  GENERAL_QUESTIONS.forEach(q => deck.push({...q, part:"Part 1 · General HR Screening"}));
+  roleBank.questions.forEach(q => deck.push({...q, part:`Part 2 · ${roleBank.label}`}));
+
+  if (deck.length === 0){
+    alert("Please include at least one question set before starting.");
+    return;
+  }
+
+  document.getElementById('topCandidate').textContent = candidateName;
+  document.getElementById('topPosition').textContent = roleBank.label;
+  document.getElementById('candTagName').textContent = candidateName;
+  document.getElementById('endCandName').textContent = candidateName;
+  topMeta.style.display = 'flex';
+  toggleSidebarBtn.style.display = 'block';
+
+  buildSidebar();
+  current = 0;
+  restartCount = 0;
+
+  buildCombinedRecordStream().then((stream) => {
+    enterLockedFullscreen();
+    ignoreNextExit = true;
+    setTimeout(() => {
+      ignoreNextExit = false;
+      interviewActive = true;
+      document.getElementById('camCorner').classList.add('active');
+      const cornerVid = document.getElementById('camCornerVideo');
+      cornerVid.srcObject = mediaStream;
+      startRecording(stream);
+      startTimer();
+      showFlasher();
+      render();
+    }, 1600);
+  }).catch((err) => {
+    statusEl.textContent = "Something went wrong starting the recording. Please try clicking Start Interview again.";
+    statusEl.className = 'status-line err';
+  });
+}
+
+function buildSidebar(){
+  sidebar.innerHTML = '';
+  sidebar.classList.remove('hidden');
+  let lastPart = null;
+  deck.forEach((q, i) => {
+    if (q.part !== lastPart){
+      const h = document.createElement('h4');
+      h.textContent = q.part;
+      sidebar.appendChild(h);
+      lastPart = q.part;
+    }
+    const item = document.createElement('div');
+    item.className = 'qnav-item';
+    item.dataset.index = i;
+    item.innerHTML = `<div class="qnum">${i+1}</div><div class="qtext">${q.text}</div>`;
+    item.addEventListener('click', () => { current = i; render(); });
+    sidebar.appendChild(item);
+  });
+}
+
+function showFlasher(){
+  setupScreen.style.display = 'none';
+  roleScreen.style.display = 'none';
+  document.getElementById('encourageScreen').style.display = 'none';
+  endScreen.classList.remove('active');
+  flasherScreen.classList.add('active');
+}
+
+function go(dir){
+  current += dir;
+  if (current < 0) current = 0;
+  if (current >= deck.length){ finishInterview(); return; }
+  render();
+}
+
+function render(){
+  const q = deck[current];
+  document.getElementById('partBadge').textContent = q.part;
+  document.getElementById('catBadge').textContent = q.cat;
+  document.getElementById('qtext').textContent = q.text;
+  document.getElementById('qhint').textContent = q.hint || '';
+  document.getElementById('counterText').textContent = `Question ${current+1} of ${deck.length}`;
+  document.getElementById('progressFill').style.width = ((current)/(deck.length-1||1)*100) + '%';
+  document.getElementById('prevBtn').disabled = current === 0;
+
+  const items = sidebar.querySelectorAll('.qnav-item');
+  items.forEach((el, i) => {
+    el.classList.toggle('active', i === current);
+    el.classList.toggle('done', i < current);
+  });
+  const activeEl = sidebar.querySelector('.qnav-item.active');
+  if (activeEl) activeEl.scrollIntoView({block:'nearest'});
+
+  speakText(q.text);
+}
+
+async function finishInterview(){
+  interviewActive = false;
+  flasherScreen.classList.remove('active');
+  endScreen.classList.add('active');
+  stopTimer();
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  document.getElementById('camCorner').classList.remove('active');
+  document.getElementById('endSavingLine').style.display = driveUploadEnabled ? 'block' : 'none';
+  if (driveUploadEnabled){
+    document.getElementById('endSavingLine').textContent = 'Saving your responses…';
+  }
+
+  const ok = await stopRecording();
+  teardownScreenCapture();
+
+  if (driveUploadEnabled){
+    const line = document.getElementById('endSavingLine');
+    line.textContent = ok ? '✓ Your responses have been saved.' : 'Your interview has been completed.';
+    // Deliberately no technical detail or action asked of the applicant either way — a failed
+    // save is a matter for HR/admin to notice and follow up on, not something to hand to them.
+  }
+
+  const flagLine = document.getElementById('restartFlagLine');
+  if (restartCount > 0){
+    flagLine.style.display = 'block';
+    flagLine.textContent = `⚠ This session was restarted ${restartCount} time(s) due to the applicant leaving the interview window.`;
+  } else {
+    flagLine.style.display = 'none';
+  }
+  if (mediaStream){ mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+  micSourceNode = null;
+  exitFullscreenIfAny();
+}
+
+function startTimer(){
+  timerSeconds = 0;
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const m = String(Math.floor(timerSeconds/60)).padStart(2,'0');
+    const s = String(timerSeconds%60).padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function stopTimer(){ if (timerInterval) clearInterval(timerInterval); }
+</script>
+</body>
+</html>
